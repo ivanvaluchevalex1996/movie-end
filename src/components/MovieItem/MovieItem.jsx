@@ -56,6 +56,7 @@ function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRat
                   onChange={(star) => {
                     onRate(idForRate, star);
                     setRating(star);
+                    // console.log(star);
                   }}
                 />
               </div>

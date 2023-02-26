@@ -12,7 +12,7 @@ function App() {
   const [moviesData, setMoviesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [query, setQuery] = useState("Return");
+  const [query, setQuery] = useState("harry potter");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageQty, setCurrentPageQty] = useState(0);
   const [genres, setGenres] = useState([]);
@@ -71,8 +71,15 @@ function App() {
 
     const ratedMovies = await movieService.getRatedMovies();
     setRate(ratedMovies.results);
+    await movieService.deleteRating(id);
+    // rate.forEach((el, i) => {
+    //   if (value === 0 && el.id === id) {
+    //     rate.splice(i, 1);
+    //   }
+    //   console.log(rate);
+    // });
   };
-
+  console.log(rate);
   // console.log(rate);
   //  пользовательский хук useDebouncedEffect, который будет ждать выполнения useEffect до тех пор, пока состояние не обновится на время задержки
   useDebouncedEffect(() => getDataMovies(), [query, currentPage], 600);

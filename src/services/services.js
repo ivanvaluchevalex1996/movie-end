@@ -40,6 +40,7 @@ class MovieDB {
 
   async postMovieRating(movieId, rating) {
     const token = localStorage.getItem("token");
+    console.log(token);
     const data = await fetch(
       `${this.apiBase}/movie/${movieId}/rating?api_key=${this.apiKey}&guest_session_id=${token}`,
       {
@@ -56,14 +57,27 @@ class MovieDB {
     return res;
   }
 
+  async deleteRating(movieId) {
+    const token = localStorage.getItem("token");
+    const data = await fetch(
+      `${this.apiBase}/movie/${movieId}/rating?api_key=${this.apiKey}&guest_session_id=${token}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        },
+      }
+    );
+    console.log(data);
+    return data;
+  }
+
   async getRatedMovies() {
     const token = localStorage.getItem("token");
     const data = await fetch(
       `https://api.themoviedb.org/3/guest_session/${token}/rated/movies?api_key=c1a22ba4a7ffc5556360b6a8ecf7d62d&language=en-US`
     );
-    console.log(data);
     const result = await data.json();
-    console.log(result);
     return result;
   }
 
