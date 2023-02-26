@@ -2,7 +2,7 @@ import React from "react";
 import MovieItem from "../MovieItem/MovieItem";
 import "./MovieList.css";
 
-function MovieList({ moviesData }) {
+function MovieList({ moviesData, onRate }) {
   const elem = moviesData.map((item) => (
     <MovieItem
       key={item.id}
@@ -13,6 +13,8 @@ function MovieList({ moviesData }) {
       genreId={item.genre_ids}
       vote={item.vote_average}
       idForRate={item.id}
+      onRate={onRate}
+      rateMovie={item}
     />
   ));
   return <ul className="all-content">{elem}</ul>;

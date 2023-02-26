@@ -33,9 +33,10 @@ class MovieDB {
     const data = await fetch(
       "https://api.themoviedb.org/3/authentication/guest_session/new?api_key=c1a22ba4a7ffc5556360b6a8ecf7d62d"
     );
-    const result = await data.json();
-    localStorage.setItem("token", result.guest_session_id);
-    // потом исправить, работает но выглядит дерьмово
+    console.log(data);
+    const res = await data.json();
+    console.log(res);
+    localStorage.setItem("token", res.guest_session_id);
   }
 
   async postMovieRating(movieId, rating) {
@@ -53,18 +54,35 @@ class MovieDB {
       }
     );
     const res = await data.json();
-    console.log(res);
-    console.log(movieId, rating);
+    return res;
   }
 
-  async getMovieRating() {
+  async getRatedMovies() {
     const token = localStorage.getItem("token");
     const data = await fetch(
-      `https://api.themoviedb.org/3/guest_session/${token}/rated/movies?api_key=c1a22ba4a7ffc5556360b6a8ecf7d62d&language=en-US&sort_by=created_at.asc`
+      `https://api.themoviedb.org/3/guest_session/${token}/rated/movies?api_key=c1a22ba4a7ffc5556360b6a8ecf7d62d&language=en-US`
     );
+    console.log(data);
     const result = await data.json();
-    // setEnd(result.results);
     console.log(result);
+    return result;
+  }
+
+  getLocalGuestSessionToken() {
+    return localStorage.getItem("token");
+  }
+
+  setLocalGuestSessionToken(token) {
+    localStorage.setItem("token", token);
+    // setter не надо return
+  }
+
+  setLocalRating(id, value) {
+    localStorage.setItem(id, value);
+  }
+
+  getLocalRating(id) {
+    return +localStorage.getItem(id);
   }
 }
 

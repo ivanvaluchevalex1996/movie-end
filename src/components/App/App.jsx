@@ -17,7 +17,7 @@ function App() {
   const [currentPageQty, setCurrentPageQty] = useState(0);
   const [genres, setGenres] = useState([]);
   const [rate, setRate] = useState([]);
-  console.log(rate);
+
   const getDataMovies = async () => {
     try {
       setLoading(true);
@@ -35,27 +35,6 @@ function App() {
     }
   };
 
-  // const getDataGenres = async () => {
-  //   const genres = await movieService.getGenres();
-  //   setGenres(genres);
-  // };
-
-  const getDataGenres = () => {
-    movieService.getGenres().then((e) => {
-      setGenres(e.genres);
-    });
-  };
-
-  const getDataQuestSession = () => {
-    movieService.getQuestSession();
-  };
-
-  const getDataRate = () => {
-    movieService.getMovieRating();
-  };
-
-  localStorage.setItem("arr", JSON.stringify(rate));
-
   const onPaginationChange = (pg) => {
     setCurrentPage(pg);
   };
@@ -70,19 +49,36 @@ function App() {
   };
 
   useEffect(() => {
-    getDataGenres();
-    getDataQuestSession();
-    // getDataRate();
+    const load = async () => {
+      if (!movieService.getLocalGuestSessionToken()) {
+        const token = await movieService.getQuestSession();
+        movieService.setLocalGuestSessionToken(token);
+      }
+
+      const dataGenre = await movieService.getGenres();
+      const ratedMovies = await movieService.getRatedMovies();
+      setRate(ratedMovies.results);
+      setGenres(dataGenre.genres);
+    };
+
+    load();
   }, []);
 
-  useEffect(() => {
-    getDataRate();
-  }, []);
+  // ее в мувиайтем
+  const onRate = async (id, value) => {
+    await movieService.postMovieRating(id, value);
+    movieService.setLocalRating(id, value);
+
+    const ratedMovies = await movieService.getRatedMovies();
+    setRate(ratedMovies.results);
+  };
+
+  // console.log(rate);
   //  пользовательский хук useDebouncedEffect, который будет ждать выполнения useEffect до тех пор, пока состояние не обновится на время задержки
   useDebouncedEffect(() => getDataMovies(), [query, currentPage], 600);
 
   const spinner = loading ? <Spin /> : null;
-  const content = !loading ? <MovieList moviesData={moviesData} /> : null;
+  const content = !loading ? <MovieList moviesData={moviesData} onRate={onRate} /> : null;
   const errorIndicator = error ? <ErrorIndicator /> : null;
   const paginationPanel =
     !loading && !error && query ? (
@@ -119,7 +115,7 @@ function App() {
     {
       key: "2",
       label: `Rated`,
-      children: <MovieList moviesData={moviesData} />,
+      children: <MovieList moviesData={rate} />,
     },
   ];
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./MovieItem.css";
 import { format } from "date-fns";
 import truncate from "../../utils/truncate";
@@ -7,9 +7,16 @@ import { Progress, Rate } from "antd";
 import changeColor from "../../utils/changeColor";
 import movieService from "../../services/services";
 
-function MovieItem({ img, title, overview, date, genreId, vote, idForRate }) {
+function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRate }) {
   const Images = "https://image.tmdb.org/t/p/original";
   const NoImg = "/images/no4.svg";
+
+  const [rating, setRating] = useState(0);
+
+  useEffect(() => {
+    setRating(movieService.getLocalRating(idForRate));
+  }, [idForRate]);
+
   return (
     <Consumer>
       {(genres) => (
@@ -45,8 +52,10 @@ function MovieItem({ img, title, overview, date, genreId, vote, idForRate }) {
                 <Rate
                   allowHalf
                   count="10"
+                  value={rating}
                   onChange={(star) => {
-                    movieService.postMovieRating(idForRate, star);
+                    onRate(idForRate, star);
+                    setRating(star);
                   }}
                 />
               </div>
