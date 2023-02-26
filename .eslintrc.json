@@ -1,0 +1,77 @@
+{
+  // где будет исполняться наш код (это значит что мы работаем в рамках браузера)
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  /* Пресет с настройками. prettier должен быть последним. 
+    Он удаляет некоторые правила eslint из-за которых могут возникать конфликты. */
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:prettier/recommended",
+    "airbnb",
+    "prettier"
+  ],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "presets": ["@babel/preset-react"]
+    }
+  },
+  "plugins": ["react", "import", "prettier"],
+  /* Правила для отслеживания линтером. Если пресеты покрывают не все ситуации, 
+    вы можете прописать нужные правила вручную. */
+  "rules": {
+    "jsx-a11y/no-autofocus": "off",
+    "no-plusplus": "off",
+    "jsx-a11y/label-has-associated-control": 0,
+    "jsx-a11y/control-has-associated-label": 0,
+
+    "class-methods-use-this": "warn",
+    // чтобы посдвечивало предупреждением неиспользуемые переменные
+    "no-unused-vars": "warn",
+
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ], // Обязательно!! Подсвечивает ошибки из Prettier.
+
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": 0, // Отключаем правило проверки передаваемых типов.
+    "import/no-unresolved": [
+      2,
+      {
+        "caseSensitive": false
+      }
+    ],
+    //Чтобы ESLint не ругался на то, что у нас JSX присутствует в файлах с расширением '.js', можно добавить правило
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".js", ".jsx"]
+      }
+    ],
+    "import/order": [
+      0,
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always"
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "moduleDirectory": ["node_modules", "src/"]
+      }
+    }
+  }
+}
