@@ -35,8 +35,7 @@ class MovieDB {
     );
     console.log(data);
     const res = await data.json();
-    console.log(res);
-    localStorage.setItem("token", res.guest_session_id);
+    return res;
   }
 
   async postMovieRating(movieId, rating) {

@@ -19,6 +19,9 @@ function App() {
   const [rate, setRate] = useState([]);
 
   const getDataMovies = async () => {
+    if (query.trim().length === 0) {
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
@@ -41,18 +44,15 @@ function App() {
 
   const onSearchChange = (e) => {
     // условие, так как может быть 2 слова в поиске
-    if (query.length === 0) {
-      setQuery(e.target.value.trim());
-    } else {
-      setQuery(e.target.value);
-    }
+
+    setQuery(e.target.value);
   };
 
   useEffect(() => {
     const load = async () => {
       if (!movieService.getLocalGuestSessionToken()) {
-        const token = await movieService.getQuestSession();
-        movieService.setLocalGuestSessionToken(token);
+        const session = await movieService.getQuestSession();
+        movieService.setLocalGuestSessionToken(session.guest_session_id);
       }
 
       const dataGenre = await movieService.getGenres();
