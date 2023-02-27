@@ -7,7 +7,7 @@ import { Progress, Rate } from "antd";
 import changeColor from "../../utils/changeColor";
 import movieService from "../../services/services";
 
-function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRate }) {
+function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRate, onDeleteRate }) {
   const Images = "https://image.tmdb.org/t/p/original";
   const NoImg = "/images/no4.svg";
 
@@ -54,9 +54,15 @@ function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRat
                   count="10"
                   value={rating}
                   onChange={(star) => {
-                    onRate(idForRate, star);
-                    setRating(star);
-                    // console.log(star);
+                    if (star) {
+                      onRate(idForRate, star);
+                      setRating(star);
+                    }
+                    if (!star) {
+                      onDeleteRate(idForRate);
+                      setRating(0);
+                    }
+                    console.log(star);
                   }}
                 />
               </div>

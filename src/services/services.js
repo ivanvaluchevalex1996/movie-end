@@ -40,7 +40,6 @@ class MovieDB {
 
   async postMovieRating(movieId, rating) {
     const token = localStorage.getItem("token");
-    console.log(token);
     const data = await fetch(
       `${this.apiBase}/movie/${movieId}/rating?api_key=${this.apiKey}&guest_session_id=${token}`,
       {

@@ -71,23 +71,36 @@ function App() {
 
     const ratedMovies = await movieService.getRatedMovies();
     setRate(ratedMovies.results);
-    await movieService.deleteRating(id);
-    // rate.forEach((el, i) => {
-    //   if (value === 0 && el.id === id) {
-    //     rate.splice(i, 1);
-    //   }
-    //   console.log(rate);
-    // });
+    console.log(ratedMovies);
   };
+
+  const onDeleteRate = async (id) => {
+    await movieService.deleteRating(id);
+    localStorage.removeItem(id);
+    const ratedMovies = await movieService.getRatedMovies();
+    setRate(ratedMovies.results);
+    console.log(ratedMovies);
+  };
+
   console.log(rate);
   // console.log(rate);
   //  пользовательский хук useDebouncedEffect, который будет ждать выполнения useEffect до тех пор, пока состояние не обновится на время задержки
   useDebouncedEffect(() => getDataMovies(), [query, currentPage], 600);
 
   const spinner = loading ? <Spin /> : null;
-  const content = !loading ? <MovieList moviesData={moviesData} onRate={onRate} /> : null;
+  const content = !loading ? (
+    <MovieList moviesData={moviesData} onRate={onRate} onDeleteRate={onDeleteRate} />
+  ) : null;
   const errorIndicator = error ? <ErrorIndicator /> : null;
-  const paginationPanel =
+  const paginationPanelSearch =
+    !loading && !error && query ? (
+      <Pagination
+        defaultCurrent={currentPage}
+        total={currentPageQty}
+        onChange={onPaginationChange}
+      />
+    ) : null;
+  const paginationPanelRated =
     !loading && !error && query ? (
       <Pagination
         defaultCurrent={currentPage}
@@ -115,14 +128,18 @@ function App() {
           {spinner}
           {content}
           {errorIndicator}
-          {paginationPanel}
+          {paginationPanelSearch}
         </>
       ),
     },
     {
       key: "2",
       label: `Rated`,
-      children: <MovieList moviesData={rate} />,
+      children: (
+        <>
+          <MovieList moviesData={rate} />,{paginationPanelRated}
+        </>
+      ),
     },
   ];
 
@@ -130,7 +147,7 @@ function App() {
     <div>
       <Provider value={genres}>
         {/* <Online> */}
-        <Tabs defaultActiveKey="1" items={items} /* onChange={onTabsChange} */ />
+        <Tabs defaultActiveKey="1" items={items} />
         {/* </Online>
         <Offline>
           <Alert message="Нет сети, проверьте подключение" type="error" showIcon />
