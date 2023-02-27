@@ -19,7 +19,6 @@ function App() {
   const [currentPageQtyRate, setCurrentPageQtyRate] = useState(0);
   const [genres, setGenres] = useState([]);
   const [rate, setRate] = useState([]);
-
   const getDataMovies = async () => {
     if (query.trim().length === 0) {
       return;
@@ -31,7 +30,7 @@ function App() {
         setLoading(false);
       }
       const data = await movieService.getMovies(query, currentPage);
-      setCurrentPageQty(data.total_pages);
+      setCurrentPageQty(data.total_results);
       setMoviesData(data.results);
     } catch (err) {
       setError(err);
@@ -40,12 +39,12 @@ function App() {
     }
   };
 
-  const loadRatedMovies = async () => {
+  const loadRatedMovies = async (page) => {
     try {
       setLoading(true);
       setError(null);
-      const data = await movieService.getRatedMovies(currentPageRate);
-      setCurrentPageQtyRate(data.total_pages);
+      const data = await movieService.getRatedMovies(page);
+      setCurrentPageQtyRate(data.total_results);
       setRate(data.results);
     } catch (err) {
       setError(err);
@@ -63,7 +62,6 @@ function App() {
   };
 
   const onSearchChange = (e) => {
-    // условие, так как может быть 2 слова в поиске
     setQuery(e.target.value);
   };
 
@@ -75,7 +73,7 @@ function App() {
       }
 
       const dataGenre = await movieService.getGenres();
-      const ratedMovies = await movieService.getRatedMovies(currentPageRate);
+      const ratedMovies = await movieService.getRatedMovies();
       setRate(ratedMovies.results);
       setGenres(dataGenre.genres);
     };
@@ -88,20 +86,16 @@ function App() {
     if (value > 0) {
       await movieService.postMovieRating(id, value);
       movieService.setLocalRating(id, value);
-      const ratedMovies = await movieService.getRatedMovies(currentPageRate);
-      setRate(ratedMovies.results);
     } else {
       await movieService.deleteRating(id);
       localStorage.removeItem(id);
-      const ratedMovies = await movieService.getRatedMovies(currentPageRate);
-      setRate(ratedMovies.results);
+      const newRatedMovies = [...rate].filter((el) => el.id !== id);
+      setRate(newRatedMovies);
     }
-    console.log(value);
   };
-
+  console.log(rate);
   //  пользовательский хук useDebouncedEffect, который будет ждать выполнения useEffect до тех пор, пока состояние не обновится на время задержки
   useDebouncedEffect(() => getDataMovies(), [query, currentPage], 600);
-
   const spinner = loading ? <Spin /> : null;
   const content = !loading ? (
     <MovieList moviesData={moviesData} onRate={onRate} /** onDeleteRate={onDeleteRate} */ />
@@ -110,17 +104,19 @@ function App() {
   const paginationPanelSearch =
     !loading && !error && query ? (
       <Pagination
-        defaultCurrent={currentPage}
+        current={currentPage}
         total={currentPageQty}
         onChange={onPaginationChange}
+        pageSize={20}
       />
     ) : null;
   const paginationPanelRated =
     !loading && !error ? (
       <Pagination
-        defaultCurrent={currentPageRate}
+        current={currentPageRate}
         total={currentPageQtyRate}
         onChange={onPaginationChangeRate}
+        pageSize={20}
       />
     ) : null;
 
@@ -132,6 +128,15 @@ function App() {
       </>
     );
   }
+
+  const onTabsChange = (active) => {
+    if (active === "2") {
+      loadRatedMovies(1);
+    }
+    if (active === "1") {
+      getDataMovies();
+    }
+  };
 
   const items = [
     {
@@ -163,7 +168,7 @@ function App() {
     <div>
       <Provider value={genres}>
         {/* <Online> */}
-        <Tabs defaultActiveKey="1" items={items} />
+        <Tabs defaultActiveKey="1" items={items} onChange={onTabsChange} />
         {/* </Online>
         <Offline>
           <Alert message="Нет сети, проверьте подключение" type="error" showIcon />
