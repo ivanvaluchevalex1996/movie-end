@@ -71,10 +71,10 @@ class MovieDB {
     return data;
   }
 
-  async getRatedMovies() {
+  async getRatedMovies(page = 1) {
     const token = localStorage.getItem("token");
     const data = await fetch(
-      `https://api.themoviedb.org/3/guest_session/${token}/rated/movies?api_key=c1a22ba4a7ffc5556360b6a8ecf7d62d&language=en-US`
+      `https://api.themoviedb.org/3/guest_session/${token}/rated/movies?api_key=c1a22ba4a7ffc5556360b6a8ecf7d62d&page=${page}`
     );
     const result = await data.json();
     return result;
