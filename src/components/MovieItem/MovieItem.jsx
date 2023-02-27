@@ -54,15 +54,14 @@ function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRat
                   count="10"
                   value={rating}
                   onChange={(star) => {
-                    if (star) {
-                      onRate(idForRate, star);
-                      setRating(star);
-                    }
-                    if (!star) {
-                      onDeleteRate(idForRate);
-                      setRating(0);
-                    }
-                    console.log(star);
+                    onRate(idForRate, star);
+                    setRating(star);
+                    // if (star) {
+                    //   setRating(star);
+                    // }
+                    // if (!star) {
+                    //   setRating(0);
+                    // }
                   }}
                 />
               </div>

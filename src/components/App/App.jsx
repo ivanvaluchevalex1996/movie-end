@@ -66,41 +66,29 @@ function App() {
 
   // ее в мувиайтем
   const onRate = async (id, value) => {
-    await movieService.postMovieRating(id, value);
-    movieService.setLocalRating(id, value);
-
-    const ratedMovies = await movieService.getRatedMovies();
-    setRate(ratedMovies.results);
-    console.log(ratedMovies);
+    if (value > 0) {
+      await movieService.postMovieRating(id, value);
+      movieService.setLocalRating(id, value);
+      const ratedMovies = await movieService.getRatedMovies();
+      setRate(ratedMovies.results);
+    } else {
+      console.log("<0");
+      await movieService.deleteRating(id);
+      localStorage.removeItem(id);
+      const ratedMovies = await movieService.getRatedMovies();
+      setRate(ratedMovies.results);
+    }
   };
 
-  const onDeleteRate = async (id) => {
-    await movieService.deleteRating(id);
-    localStorage.removeItem(id);
-    const ratedMovies = await movieService.getRatedMovies();
-    setRate(ratedMovies.results);
-    console.log(ratedMovies);
-  };
-
-  console.log(rate);
-  // console.log(rate);
   //  пользовательский хук useDebouncedEffect, который будет ждать выполнения useEffect до тех пор, пока состояние не обновится на время задержки
   useDebouncedEffect(() => getDataMovies(), [query, currentPage], 600);
 
   const spinner = loading ? <Spin /> : null;
   const content = !loading ? (
-    <MovieList moviesData={moviesData} onRate={onRate} onDeleteRate={onDeleteRate} />
+    <MovieList moviesData={moviesData} onRate={onRate} /** onDeleteRate={onDeleteRate} */ />
   ) : null;
   const errorIndicator = error ? <ErrorIndicator /> : null;
   const paginationPanelSearch =
-    !loading && !error && query ? (
-      <Pagination
-        defaultCurrent={currentPage}
-        total={currentPageQty}
-        onChange={onPaginationChange}
-      />
-    ) : null;
-  const paginationPanelRated =
     !loading && !error && query ? (
       <Pagination
         defaultCurrent={currentPage}
@@ -135,11 +123,7 @@ function App() {
     {
       key: "2",
       label: `Rated`,
-      children: (
-        <>
-          <MovieList moviesData={rate} />,{paginationPanelRated}
-        </>
-      ),
+      children: <MovieList moviesData={rate} onRate={onRate} />,
     },
   ];
 
