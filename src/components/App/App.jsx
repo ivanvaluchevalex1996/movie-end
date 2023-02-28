@@ -150,7 +150,7 @@ function App() {
       label: `Search`,
       children: (
         <>
-          <Input placeholder="Search films" onChange={onSearchChange} value={query} />
+          <Input placeholder="Search films..." onChange={onSearchChange} value={query} />
           {spinner}
           {content}
           {errorIndicator}
