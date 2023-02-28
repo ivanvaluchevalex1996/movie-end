@@ -3,12 +3,12 @@ import "./MovieItem.css";
 import { format } from "date-fns";
 import truncate from "../../utils/truncate";
 import { Consumer } from "../../context/genreContext";
-import { Progress, Rate } from "antd";
+import { Progress, Rate, Image } from "antd";
 import changeColor from "../../utils/changeColor";
 import movieService from "../../services/services";
 
 function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRate }) {
-  const Images = "https://image.tmdb.org/t/p/original";
+  const Images = "https://image.tmdb.org/t/p/w500";
   const NoImg = "/images/no4.svg";
 
   const [rating, setRating] = useState(0);
@@ -22,7 +22,7 @@ function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRat
       {(genres) => (
         <li className="wrapper">
           <section className="visual">
-            <img className="visual__image" src={img ? `${Images}${img}` : `${NoImg}`} alt="img" />
+            <Image src={img ? `${Images}${img}` : `${NoImg}`} height="281px" width="180px" />
           </section>
           <section className="content">
             <Progress
@@ -48,17 +48,17 @@ function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRat
                 return null;
               })}
               <p className="box__text">{truncate(overview)}</p>
-              <div className="box__star">
-                <Rate
-                  allowHalf
-                  count="10"
-                  value={rating}
-                  onChange={(star) => {
-                    onRate(idForRate, star);
-                    setRating(star);
-                  }}
-                />
-              </div>
+            </div>
+            <div className="box__star">
+              <Rate
+                allowHalf
+                count="10"
+                value={rating}
+                onChange={(star) => {
+                  onRate(idForRate, star);
+                  setRating(star);
+                }}
+              />
             </div>
           </section>
         </li>

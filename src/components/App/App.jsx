@@ -6,7 +6,7 @@ import { Input, Spin, Alert, Pagination, Tabs } from "antd";
 import ErrorIndicator from "../Error/Error";
 import { Provider } from "../../context/genreContext";
 import useDebouncedEffect from "../../customHooks/useDebounce";
-// import { Offline, Online } from "react-detect-offline";
+import { Offline, Online } from "react-detect-offline";
 
 function App() {
   const [moviesData, setMoviesData] = useState([]);
@@ -100,7 +100,6 @@ function App() {
 
   //  пользовательский хук useDebouncedEffect, который будет ждать выполнения useEffect до тех пор, пока состояние не обновится на время задержки
   useDebouncedEffect(() => getDataMovies(), [query, currentPage], 600);
-
   const spinner = loading ? <Spin /> : null;
   const content = !loading ? (
     <MovieList moviesData={moviesData} onRate={onRate} /** onDeleteRate={onDeleteRate} */ />
@@ -117,7 +116,7 @@ function App() {
     ) : null;
 
   const paginationPanelRated =
-    !loading && !error ? (
+    !error && rate.length ? (
       <Pagination
         current={currentPageRate}
         total={currentPageQtyRate}
@@ -173,12 +172,12 @@ function App() {
   return (
     <div>
       <Provider value={genres}>
-        {/* <Online> */}
-        <Tabs defaultActiveKey="1" items={items} onChange={onTabsChange} />
-        {/* </Online>
+        <Online>
+          <Tabs defaultActiveKey="1" items={items} onChange={onTabsChange} />
+        </Online>
         <Offline>
           <Alert message="Нет сети, проверьте подключение" type="error" showIcon />
-        </Offline> */}
+        </Offline>
       </Provider>
     </div>
   );

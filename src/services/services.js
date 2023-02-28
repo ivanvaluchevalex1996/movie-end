@@ -33,7 +33,6 @@ class MovieDB {
     const data = await fetch(
       "https://api.themoviedb.org/3/authentication/guest_session/new?api_key=c1a22ba4a7ffc5556360b6a8ecf7d62d"
     );
-    console.log(data);
     const res = await data.json();
     return res;
   }

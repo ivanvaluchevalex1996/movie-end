@@ -1,12 +1,8 @@
 .wrapper {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 35px;
+  margin: 15px;
   box-shadow: 1px 1px 10px 1px;
-}
-
-.visual {
-  height: 281px;
 }
 
 .content {
@@ -101,7 +97,9 @@
 }
 
 .ant-rate {
-  /* margin-top: 40px; */
+  position: absolute;
+  bottom: 3px;
+  left: 18px;
 }
 
 .ant-rate .ant-rate-star:not(:last-child) {

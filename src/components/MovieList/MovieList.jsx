@@ -6,7 +6,7 @@ function MovieList({ moviesData, onRate }) {
   const elem = moviesData.map((item) => (
     <MovieItem
       key={item.id}
-      img={item.backdrop_path}
+      img={item.poster_path}
       title={item.title}
       overview={item.overview}
       date={item.release_date}
