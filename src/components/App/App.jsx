@@ -19,6 +19,7 @@ function App() {
   const [currentPageQtyRate, setCurrentPageQtyRate] = useState(0);
   const [genres, setGenres] = useState([]);
   const [rate, setRate] = useState([]);
+
   const getDataMovies = async () => {
     if (query.trim().length === 0) {
       return;
@@ -30,7 +31,7 @@ function App() {
         setLoading(false);
       }
       const data = await movieService.getMovies(query, currentPage);
-      setCurrentPageQty(data.total_results);
+      setCurrentPageQty(data.total_pages);
       setMoviesData(data.results);
     } catch (err) {
       setError(err);
@@ -56,6 +57,7 @@ function App() {
   const onPaginationChange = (pg) => {
     setCurrentPage(pg);
   };
+
   const onPaginationChangeRate = (pg) => {
     setCurrentPageRate(pg);
     loadRatedMovies(pg);
@@ -86,16 +88,19 @@ function App() {
     if (value > 0) {
       await movieService.postMovieRating(id, value);
       movieService.setLocalRating(id, value);
+      const ratedMovies = await movieService.getRatedMovies();
+      setRate(ratedMovies.results);
     } else {
       await movieService.deleteRating(id);
       localStorage.removeItem(id);
-      const newRatedMovies = [...rate].filter((el) => el.id !== id);
-      setRate(newRatedMovies);
+      const ratedMovies = await movieService.getRatedMovies();
+      setRate(ratedMovies.results);
     }
   };
-  console.log(rate);
+
   //  пользовательский хук useDebouncedEffect, который будет ждать выполнения useEffect до тех пор, пока состояние не обновится на время задержки
   useDebouncedEffect(() => getDataMovies(), [query, currentPage], 600);
+
   const spinner = loading ? <Spin /> : null;
   const content = !loading ? (
     <MovieList moviesData={moviesData} onRate={onRate} /** onDeleteRate={onDeleteRate} */ />
@@ -110,6 +115,7 @@ function App() {
         pageSize={20}
       />
     ) : null;
+
   const paginationPanelRated =
     !loading && !error ? (
       <Pagination

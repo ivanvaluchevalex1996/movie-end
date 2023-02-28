@@ -15,7 +15,6 @@ function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRat
 
   useEffect(() => {
     setRating(movieService.getLocalRating(idForRate));
-    console.log(movieService.getLocalRating(idForRate));
   }, [idForRate]);
 
   return (
@@ -56,17 +55,7 @@ function MovieItem({ img, title, overview, date, genreId, vote, idForRate, onRat
                   value={rating}
                   onChange={(star) => {
                     onRate(idForRate, star);
-
                     setRating(star);
-                    // if (!star) {
-                    //   setRating(0);
-                    // }
-                    // if (star) {
-                    //   setRating(star);
-                    // }
-                    // if (!star) {
-                    //   setRating(0);
-                    // }
                   }}
                 />
               </div>
