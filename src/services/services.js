@@ -7,8 +7,6 @@ class MovieDB {
     this.apiBase = "https://api.themoviedb.org/3";
     this.apiKey = "c1a22ba4a7ffc5556360b6a8ecf7d62d";
   }
-  // можно вне конструктора
-  // apiBase = "https://api.themoviedb.org/3/search/movie";
 
   async getResource(url) {
     const result = await fetch(`${this.apiBase}${url}`);
@@ -19,7 +17,7 @@ class MovieDB {
     return body;
   }
 
-  async getMovies(querY, currentPagE) {
+  async getMovies(querY = "harry", currentPagE = 1) {
     return this.getResource(
       `/search/movie?api_key=${this.apiKey}&language=en-US&query=${querY}&page=${currentPagE}`
     );

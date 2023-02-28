@@ -12,26 +12,23 @@ function App() {
   const [moviesData, setMoviesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [query, setQuery] = useState("harry potter");
+  const [searchQuery, setSearchQuery] = useState("harry potter");
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentPageQty, setCurrentPageQty] = useState(0);
+  const [totalResults, setTotalResults] = useState(0);
   const [currentPageRate, setCurrentPageRate] = useState(1);
-  const [currentPageQtyRate, setCurrentPageQtyRate] = useState(0);
+  const [totalResultsRate, setTotalResultsRate] = useState(0);
   const [genres, setGenres] = useState([]);
   const [rate, setRate] = useState([]);
 
   const getDataMovies = async () => {
-    if (query.trim().length === 0) {
+    if (searchQuery.trim().length === 0) {
       return;
     }
     try {
       setLoading(true);
       setError(null);
-      if (query.length === 0) {
-        setLoading(false);
-      }
-      const data = await movieService.getMovies(query, currentPage);
-      setCurrentPageQty(data.total_pages);
+      const data = await movieService.getMovies(searchQuery, currentPage);
+      setTotalResults(data.total_pages);
       setMoviesData(data.results);
     } catch (err) {
       setError(err);
@@ -45,7 +42,7 @@ function App() {
       setLoading(true);
       setError(null);
       const data = await movieService.getRatedMovies(page);
-      setCurrentPageQtyRate(data.total_results);
+      setTotalResultsRate(data.total_results);
       setRate(data.results);
     } catch (err) {
       setError(err);
@@ -64,7 +61,7 @@ function App() {
   };
 
   const onSearchChange = (e) => {
-    setQuery(e.target.value);
+    setSearchQuery(e.target.value);
   };
 
   useEffect(() => {
@@ -99,36 +96,41 @@ function App() {
   };
 
   //  пользовательский хук useDebouncedEffect, который будет ждать выполнения useEffect до тех пор, пока состояние не обновится на время задержки
-  useDebouncedEffect(() => getDataMovies(), [query, currentPage], 600);
+  useDebouncedEffect(() => getDataMovies(), [searchQuery, currentPage], 600);
   const spinner = loading ? <Spin /> : null;
   const content = !loading ? (
     <MovieList moviesData={moviesData} onRate={onRate} /** onDeleteRate={onDeleteRate} */ />
   ) : null;
   const errorIndicator = error ? <ErrorIndicator /> : null;
   const paginationPanelSearch =
-    !loading && !error && query ? (
+    !loading && !error && searchQuery ? (
       <Pagination
         current={currentPage}
-        total={currentPageQty}
+        total={totalResults}
         onChange={onPaginationChange}
         pageSize={20}
       />
     ) : null;
 
   const paginationPanelRated =
-    !error && rate.length ? (
+    !error && rate.length > 21 ? (
       <Pagination
         current={currentPageRate}
-        total={currentPageQtyRate}
+        total={totalResultsRate}
         onChange={onPaginationChangeRate}
         pageSize={20}
       />
     ) : null;
 
-  if (moviesData.length === 0 && query.length !== 0 && !loading && !error) {
+  if (moviesData.length === 0 && searchQuery.length !== 0 && !loading && !error) {
     return (
       <>
-        <Input placeholder="Search films..." onChange={onSearchChange} value={query} autoFocus />
+        <Input
+          placeholder="Search films..."
+          onChange={onSearchChange}
+          value={searchQuery}
+          autoFocus
+        />
         <Alert message="Поиск не дал результатов" type="error" showIcon />
       </>
     );
@@ -149,7 +151,7 @@ function App() {
       label: `Search`,
       children: (
         <>
-          <Input placeholder="Search films..." onChange={onSearchChange} value={query} />
+          <Input placeholder="Search films..." onChange={onSearchChange} />
           {spinner}
           {content}
           {errorIndicator}
