@@ -113,7 +113,7 @@ function App() {
     ) : null;
 
   const paginationPanelRated =
-    !error && rate.length > 21 ? (
+    !error && rate.length >= 20 ? (
       <Pagination
         current={currentPageRate}
         total={totalResultsRate}
