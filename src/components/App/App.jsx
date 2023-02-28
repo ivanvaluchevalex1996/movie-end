@@ -129,7 +129,7 @@ function App() {
   if (moviesData.length === 0 && query.length !== 0 && !loading && !error) {
     return (
       <>
-        <Input placeholder="Search films" onChange={onSearchChange} value={query} autoFocus />
+        <Input placeholder="Search films..." onChange={onSearchChange} value={query} autoFocus />
         <Alert message="Поиск не дал результатов" type="error" showIcon />
       </>
     );
