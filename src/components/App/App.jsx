@@ -19,9 +19,7 @@ function App() {
   const [totalResultsRate, setTotalResultsRate] = useState(0);
   const [genres, setGenres] = useState([]);
   const [rate, setRate] = useState([]);
-  console.log(rate);
-  console.log(currentPage);
-  console.log(totalResults);
+
   const getDataMovies = async () => {
     if (searchQuery.trim().length === 0) {
       return;
@@ -111,7 +109,7 @@ function App() {
         total={totalResults}
         onChange={onPaginationChange}
         pageSize={20}
-        hideOnSinglePage
+        // hideOnSinglePage
       />
     ) : null;
 
